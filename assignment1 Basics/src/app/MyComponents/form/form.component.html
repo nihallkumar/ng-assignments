@@ -1,0 +1,18 @@
+<input type="text" [(ngModel)]="username" />
+<p>{{username}}</p>
+
+<input type="button" [disabled]="username===''" (click)="createUser()" value="create">
+
+<input type="button" [disabled]="clear" (click)="handleDisable()" value="clear">
+
+
+<p *ngIf="create;else elseBlock">user is created with username {{username}}</p>
+<ng-template #elseBlock>
+    <p> No user is created</p>
+</ng-template>
+
+<p *ngFor="let user as users">
+    {{user}}
+</p>
+
+<p [ngStyle]="{backgroundColor: getColor()}">{{username}} is {{serverStatus}}</p>

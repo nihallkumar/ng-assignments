@@ -1,0 +1,11 @@
+<input type="button" (click)="toggle()" value="display">
+
+<p *ngIf="status">hello world</p>
+
+
+<div *ngFor="let log of logs; let i= index" [ngStyle]="{backgroundColor:i>=5?'blue':'transparent'}"
+    [ngClass]="{'white':i>=5}"
+    >
+
+    {{log}}
+</div>
