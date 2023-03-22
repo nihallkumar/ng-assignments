@@ -1,0 +1,30 @@
+<div class="row justify-content-center">
+  <div class="col-md-5  my-5">
+    <form #addUserForm="ngForm" (submit)="onSubmit(addUserForm)">
+      <div class="mb-3">
+        <label for="firstName" class="form-label">Frist Name</label>
+        <input type="text" class="form-control" id="firstName" ngModel name="firstName" required>
+      </div>
+      <div class="mb-3">
+        <label for="lastName" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="lastName" ngModel name="lastName" required>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="text" class="form-control" id="email" ngModel name="email">
+      </div>
+      <div class="mb-3">
+        <label for="phone" class="form-label">Phone No</label>
+        <input type="number" class="form-control" ngModel name="phone" id="phone" required>
+      </div>
+      <div class="mb-3">
+        <label for="age" class="form-label">Age</label>
+        <input type="number" class="form-control" ngModel name="age" id="age" required>
+      </div>
+      <div class="my-4 row justify-content-center"  >
+        <button type="submit" [disabled]="!addUserForm.valid" class="col-md-3 btn btn-primary mx-2">{{isAdd?'Add' : 'Update'}}</button>
+        <button type="button" class="col-md-3 btn btn-warning mx-2" (click)="onCancel()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>

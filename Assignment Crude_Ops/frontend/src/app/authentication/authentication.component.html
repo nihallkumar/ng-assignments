@@ -1,0 +1,23 @@
+<div class="row justify-content-center">
+  <div class="col-md-5  my-5">
+    <form  #authForm="ngForm" (ngSubmit)="onSubmit(authForm)">
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="text" class="form-control" id="email" name="email" ngModel>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password" ngModel>
+      </div>
+      <div class="mb-3" *ngIf="!loginMode">
+        <label for="cpassword" class="form-label">Confirm Password</label>
+        <input type="password" class="form-control" id="cpassword" name="cpassword" ngModel>
+      </div>
+      <button type="submit" class="btn btn-primary" >{{loginMode?'Login':'Signup'}}</button>
+      |
+      <button type="button" class="btn btn-primary"(click)="onSwitchMode()" >Switch to {{loginMode?'Signup':'Login'}}</button>
+      </form>
+
+  </div>
+</div>
+
