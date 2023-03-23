@@ -5,6 +5,7 @@ const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const fetchuser = require('../middleware/fetchuser');
+const { response } = require('express');
 
 jwt = require('jsonwebtoken');
 const jwtSec = "helloworld";
@@ -157,7 +158,7 @@ router.patch('/edit/:id', [
         let user = await User.findById(req.params.id);
         if (!user)
             return res.status(404).send("Not Found");
- 
+
         user = await User.findByIdAndUpdate(req.params.id, { $set: updatedUser }, { new: true })
         res.json({ user });
 
@@ -173,7 +174,7 @@ router.delete('/delete/:id', async (req, res) => {
     try {
         let user = await User.findById(req.params.id);
         if (!user) {
-            return res.status(404).json({error:"Not Found"});
+            return res.status(404).json({ error: "Not Found" });
         }
 
         user = await User.findByIdAndDelete(req.params.id);
@@ -189,8 +190,55 @@ router.delete('/delete/:id', async (req, res) => {
 // ALL USERS ???????????????????????????????????????????????????????
 router.get('/allusers', async (req, res) => {
     try {
-        let user = await User.find().select("-__v").lean();
-        res.json(user)
+        let page = parseInt(req.query.page) - 1 || 0;
+        let limit = parseInt(req.query.limit) || 5;
+        let search = req.query.search || "";
+        let sort = req.query.sort || "firstName";
+
+        req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
+
+        let sortBy = {}
+        if (sort[1]) {
+            sortBy[sort[0]] = sort[1];
+        } else {
+            sortBy[sort[0]] = 'asc';
+        }
+
+        let users = await User.find({
+            $or: [
+                { firstName: { $regex: search, $options: 'i' } },
+                { lastName: { $regex: search, $options: 'i' } },
+                { age: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } },
+                { phone: { $regex: search, $options: 'i' } },
+            ]
+        })
+            .sort(sortBy)
+            .skip(page * limit)
+            .limit(limit);
+
+        let total = await User.countDocuments({
+            $or: [
+                { firstName: { $regex: search, $options: 'i' } },
+                { lastName: { $regex: search, $options: 'i' } },
+                { age: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } },
+                { phone: { $regex: search, $options: 'i' } },
+            ]
+        });
+
+        let response = {
+            error: false,
+            total,
+            page: page + 1,
+            limit,
+            users
+        }
+
+        res.json(response)
+
+        // let user = await User.find().select("-__v").lean();
+        // res.json(users)
 
     } catch (error) {
         console.error(error.message);

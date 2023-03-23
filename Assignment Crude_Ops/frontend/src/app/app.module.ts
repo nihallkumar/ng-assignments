@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
+import { ReactiveFormsModule } from '@angular/forms';
+
 
 
 
@@ -32,7 +34,8 @@ import { MaterialModule } from './material/material.module';
     HttpClientModule,
     NgxDatatableModule,
     BrowserAnimationsModule,
-    MaterialModule
+    MaterialModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

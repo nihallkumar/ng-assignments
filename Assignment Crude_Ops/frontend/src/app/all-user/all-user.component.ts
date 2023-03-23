@@ -6,7 +6,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { AuthenticationService, LoggedInData } from '../authentication/authentication.service';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
-
+import { debounceTime } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import { AllUserService } from './all-user.service';
 
 
 export interface UserData {
@@ -29,9 +31,20 @@ export class AllUserComponent implements OnInit {
   dataSource: any
   displayedColumns: string[] = []
 
+  searchInput = new FormControl('');
+  pageInput = new FormControl('');
+
+  public page = 1;
+  public limit = 5;
+  public search: any = "";
+  public sorts = { sort: 'firstName', order: 'asc' };
+
+  selected=''
+
   constructor(
     private http: HttpClient,
     private authService: AuthenticationService,
+    private allUserService: AllUserService,
     private router: Router
   ) { }
 
@@ -39,7 +52,23 @@ export class AllUserComponent implements OnInit {
   @ViewChild(MatPaginator) paginator = MatPaginator;
 
   ngOnInit(): void {
+
+    this.searchInput.valueChanges.pipe(
+      debounceTime(500)
+    ).subscribe((searchValue) => {
+      console.log("inside search")
+      this.allUserService.allUser(this.page, this.limit, searchValue, this.sorts.sort, this.sorts.order).subscribe(res => {
+        this.users = res;
+        this.dataSource = new MatTableDataSource(this.users.users)
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+      })
+    });
+
+
     this.getUsers();
+
+
     this.authService.userActive.subscribe(res => {
       if (res) {
         this.displayedColumns = ['firstName', 'lastName', 'age', 'phone', 'email', 'update', 'delete'];
@@ -48,13 +77,16 @@ export class AllUserComponent implements OnInit {
         this.displayedColumns = ['firstName', 'lastName', 'age', 'phone', 'email'];
       }
     })
+
+
   }
 
+
   getUsers() {
-    this.http.get('http://localhost:3000/auth/allusers').subscribe(res => {
+    console.log('page: ', this.page, ' sorts.sort: ', this.sorts.sort, ' sorts.order: ', this.sorts.order, ' search: ', this.search)
+    this.allUserService.allUser(this.page, this.limit, this.search, this.sorts.sort, this.sorts.order).subscribe(res => {
       this.users = res;
-      // this.dataSource = this.users;
-      this.dataSource = new MatTableDataSource(this.users)
+      this.dataSource = new MatTableDataSource(this.users.users)
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
     })
@@ -84,12 +116,14 @@ export class AllUserComponent implements OnInit {
     this.router.navigate([`adduser/${user._id}`])
   }
 
-  applyFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase()
-  }
+  // applyFilter(filterValue: string) {
+  //   this.dataSource.filter = filterValue.trim().toLowerCase()
+  // }
 
-
-
-
+  // applyFilter(filterValue: string) {
+  //   console.log(filterValue)
+  //   this.search = filterValue;
+  //   this.getUsers()
+  // }
 
 }

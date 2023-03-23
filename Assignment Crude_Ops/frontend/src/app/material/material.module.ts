@@ -5,6 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSortModule } from '@angular/material/sort';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatButtonModule} from '@angular/material/button';
+import {MatSelectModule} from '@angular/material/select';
 
 
 const MaterialComponents=[
@@ -13,7 +14,9 @@ const MaterialComponents=[
   MatInputModule,
   MatSortModule,
   MatPaginatorModule,
-  MatButtonModule
+  MatButtonModule,
+  MatSelectModule,
+
 ];
 
 

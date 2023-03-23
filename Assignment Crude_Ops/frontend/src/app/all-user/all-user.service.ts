@@ -6,10 +6,12 @@ import { Injectable } from '@angular/core';
 })
 export class AllUserService {
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-  getUser(){
-    const url = 'http://localhost:3000/auth/allusers';
+  allUser(page: number, limit: number, search:any, sortsSort: string, SortsOrder: string) {
+    const url = `http://localhost:3000/auth/allusers?page=${page}&sort=${sortsSort},${SortsOrder}&search=${search}`
 
+    return this.http.get(url);
   }
+
 }
