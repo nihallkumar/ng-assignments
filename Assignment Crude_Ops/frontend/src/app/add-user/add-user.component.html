@@ -1,29 +1,34 @@
 <div class="row justify-content-center">
-  <div class="col-md-5  my-5">
+  <div class="col-md-5  my-4">
     <form #addUserForm="ngForm" (submit)="onSubmit(addUserForm)">
       <div class="mb-3">
         <label for="firstName" class="form-label">Frist Name</label>
-        <input type="text" class="form-control" id="firstName" ngModel name="firstName" required>
+        <input type="text" class="form-control" id="firstName" ngModel #firstName="ngModel" name="firstName" required>
+        <span *ngIf="firstName.touched && firstName.invalid" style="color: red;">Please enter a valid value</span>
       </div>
       <div class="mb-3">
         <label for="lastName" class="form-label">Last Name</label>
-        <input type="text" class="form-control" id="lastName" ngModel name="lastName" required>
+        <input type="text" class="form-control" id="lastName" ngModel #lastName="ngModel" name="lastName" required>
+        <span *ngIf="lastName.touched && lastName.invalid" style="color: red;">Please enter a valid value</span>
       </div>
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input type="text" class="form-control" id="email" ngModel name="email">
+        <input type="text" class="form-control" id="email" ngModel #email="ngModel" email name="email" required>
+        <span *ngIf="email.invalid && email.touched" style="color: red;">Please enter a valid email</span>
       </div>
       <div class="mb-3">
         <label for="phone" class="form-label">Phone No</label>
-        <input type="number" class="form-control" ngModel name="phone" id="phone" required>
+        <input type="number" class="form-control" ngModel name="phone" #phone="ngModel" id="phone" required>
+        <span *ngIf="phone.touched && phone.invalid" style="color: red;">Please enter a valid value</span>
       </div>
       <div class="mb-3">
         <label for="age" class="form-label">Age</label>
-        <input type="number" class="form-control" ngModel name="age" id="age" required>
+        <input type="number" class="form-control" ngModel name="age" #age="ngModel" id="age" required>
+        <span *ngIf="age.touched && age.invalid" style="color: red;">Please enter a valid value</span>
       </div>
       <div class="my-4 row justify-content-center"  >
-        <button type="submit" [disabled]="!addUserForm.valid" class="col-md-3 btn btn-primary mx-2">{{isAdd?'Add' : 'Update'}}</button>
-        <button type="button" class="col-md-3 btn btn-warning mx-2" (click)="onCancel()">Cancel</button>
+        <button type="submit" [disabled]="!addUserForm.valid" class="col-md-3 btn btn-primary mx-2 my-2">{{isAdd?'Add' : 'Update'}}</button>
+        <button type="button" class="col-md-3 btn btn-warning mx-2 my-2" (click)="onCancel()">Cancel</button>
       </div>
     </form>
   </div>

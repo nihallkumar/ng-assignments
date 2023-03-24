@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
-import { catchError } from 'rxjs/operators';
-import { BehaviorSubject } from 'rxjs';
 import { AuthenticationService } from './authentication.service';
 
 @Component({
@@ -11,7 +8,6 @@ import { AuthenticationService } from './authentication.service';
   styleUrls: ['./authentication.component.css']
 })
 export class AuthenticationComponent {
-
   loginMode = true;
   active = false;
 
@@ -22,8 +18,6 @@ export class AuthenticationComponent {
   }
 
   onSubmit(form: NgForm) {
-    console.log(form.value)
-
     const email = form.value.email;
     const password = form.value.password;
 
