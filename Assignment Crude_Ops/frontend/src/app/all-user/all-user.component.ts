@@ -63,6 +63,12 @@ export class AllUserComponent implements OnInit {
     this.filteredUsers(pageInfo.offset + 1, this.limit, this.search, this.sorts.sort, this.sorts.order)
   }
 
+  sortData(sortInfo: { sorts: { dir: string, prop: string }[], column: {}, prevValue: string, newValue: string }) {
+    this.sorts.sort = sortInfo.sorts[0].prop;
+    this.sorts.order = sortInfo.sorts[0].dir;
+    this.filteredUsers(this.page, this.limit, this.search, this.sorts.sort, this.sorts.order)
+  }
+
   filteredUsers(page: string, limit: number, search: any, sortsSort: string, sortsOrder: string) {
     this.allUserService.allUser(page, limit, search, sortsSort, sortsOrder).subscribe(res => {
       this.rows = (res as any).users;
