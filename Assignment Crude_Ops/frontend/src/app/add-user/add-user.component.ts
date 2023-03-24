@@ -3,7 +3,7 @@ import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { AddUserService } from './add-user.service';
 import { HttpClient } from '@angular/common/http';
-import { catchError, throwError } from 'rxjs';
+import { catchError } from 'rxjs';
 
 
 @Component({
@@ -26,27 +26,23 @@ export class AddUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((param: Params) => {
-      console.log(param['id'])
       this.id = param['id'];
     });
 
     if (this.id) {
       const url = 'http://localhost:3000/auth/detail/' + this.id;
       this.http.get(url).subscribe(res => {
-        console.log(res);
         this.addUser.form.patchValue(res)
         this.isAdd = false;
       })
     }
   }
 
-  onCancel(){
+  onCancel() {
     this.router.navigate(['alluser'])
   }
 
   onSubmit(form: NgForm) {
-    console.log(form.value);
-
     const firstName = form.value.firstName;
     const lastName = form.value.lastName;
     const email = form.value.email;
@@ -63,12 +59,9 @@ export class AddUserComponent implements OnInit {
           throw (error)
         })
       ).subscribe(res => {
-        console.log(res);
         this.router.navigate(['alluser'])
       })
     }
     this.router.navigate(['alluser'])
   }
-
-
 }

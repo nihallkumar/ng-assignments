@@ -8,18 +8,14 @@ import { AuthenticationService } from '../authentication/authentication.service'
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  active = false;
 
-
-  active = true;
-
-  constructor(private authService: AuthenticationService, private router: Router) {
-    
-  }
+  constructor(private authService: AuthenticationService, private router: Router) {}
 
   ngOnInit(): void {
     this.authService.userActive.subscribe(res => {
       console.log("inside header")
-      console.log(res);
+      console.log('weweeeeeeeeeeeeeeee',res);
       this.active = res
     })
   }
@@ -30,7 +26,4 @@ export class HeaderComponent implements OnInit {
     this.authService.userActive.next(false);
     this.router.navigate(['auth'])
   }
-
-
-
 }

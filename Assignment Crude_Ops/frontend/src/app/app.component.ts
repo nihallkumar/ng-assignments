@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { AuthenticationService } from './authentication/authentication.service';
 
 @Component({
@@ -12,13 +11,11 @@ export class AppComponent {
 
   constructor(private authServices: AuthenticationService) {
     if (localStorage.getItem('token')) {
-      console.log('inside app cons')
       this.authServices.verify();
     }
     else {
       this.authServices.userActive.next(false);
     }
   }
-
 
 }

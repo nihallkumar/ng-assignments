@@ -13,14 +13,11 @@ export interface LoggedInData {
   providedIn: 'root'
 })
 export class AuthenticationService {
-
-  isLoggedIn = false;
   public userActive = new BehaviorSubject<boolean>(false);
+  isLoggedIn = false;
   dataSource: any
 
   constructor(private router: Router, private http: HttpClient) { }
-
-
 
   login(email: string, password: string) {
     const url = 'http://localhost:3000/auth/login';
@@ -35,7 +32,6 @@ export class AuthenticationService {
       })
     ).subscribe((res) => {
       this.userActive.next(true);
-      this.userActive.subscribe(res => { console.log(res) })
       localStorage.setItem('token', res.token)
       this.router.navigate(['alluser'])
     });
@@ -55,12 +51,10 @@ export class AuthenticationService {
       })
     ).subscribe((res) => {
       this.userActive.next(true);
-      this.userActive.subscribe(res => { console.log(res) })
       localStorage.setItem('token', res.token)
       this.router.navigate(['alluser'])
     });
   }
-
 
 
   verify() {
@@ -69,22 +63,18 @@ export class AuthenticationService {
     const data = {
       token: token
     };
-    const headers = { Authorization: `Bearer ${token}` };
+    // const headers = { Authorization: `Bearer ${token}` };
 
     return this.http.post(url, data).pipe(
       catchError(error => {
         alert("Unauthorized")
-        console.log(headers);
-        console.log(data);
         localStorage.removeItem('token');
         this.router.navigate(['auth']);
         this.userActive.next(false);
-        this.userActive.subscribe(res => { console.log(res) })
         throw (error)
       })
     ).subscribe((res) => {
       this.userActive.next(true);
-      this.userActive.subscribe(res => { console.log(res) })
     });
   }
 
