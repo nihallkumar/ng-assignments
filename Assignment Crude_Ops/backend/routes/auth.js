@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Image = require('../models/Image');
 const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const fetchuser = require('../middleware/fetchuser');
-const { response } = require('express');
+const multer = require('multer')
+const fs = require('fs');
 
 jwt = require('jsonwebtoken');
 const jwtSec = "helloworld";
@@ -99,14 +101,57 @@ router.post('/admin/detail', fetchuser, async (req, res) => {
     }
 })
 
+///////////////////////////////////////////////////////////////
+
+const storage = multer.diskStorage({
+    destination: "uploads",
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + file.originalname)
+    }
+})
+
+const upload = multer({
+    storage: storage
+}).single('image')
+
+router.post('/upload', (req, res) => {
+
+    upload(req, res, (err) => {
+        if (err) {
+            console.log(err)
+        } else {
+            const newImage = new Image({
+                imageName: req.body.imageName,
+                email: req.body.email,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                phone: req.body.phone,
+                age: req.body.age,
+                image: {
+                    // data:req.file.filename,
+                    data: fs.readFileSync("uploads/" + req.file.filename),
+                    contentType: 'image/jpeg'
+                }
+            })
+            newImage.save()
+                .then(() => res.send('successfully uploaded')).catch(err => { console.log(err) })
+        }
+    })
+})
+
+router.get('/upload', upload,async (req, res) => {
+    const data = await Image.find();
+    res.json(data);
+})
+
 
 // ADD USER ????????????????????????????????????????????????????????????????/
 router.post('/adduser', [
-    body('firstName', 'value can not be empty').notEmpty(),
-    body('lastName', 'value can not be empty').notEmpty(),
-    body('email', 'Enter a valid email').notEmpty(),
-    body('phone', 'Enter valid value').isNumeric(),
-    body('age', 'Enter valid value').isNumeric(),
+    // body('firstName', 'value can not be empty').notEmpty(),
+    // body('lastName', 'value can not be empty').notEmpty(),
+    // body('email', 'Enter a valid email').notEmpty(),
+    // body('phone', 'Enter valid value').isNumeric(),
+    // body('age', 'Enter valid value').isNumeric(),
 ], async (req, res) => {
 
     const errors = validationResult(req);
@@ -115,15 +160,56 @@ router.post('/adduser', [
     }
 
     try {
-        const user = await User.create({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            phone: req.body.phone,
-            age: req.body.age
+        // const user = await User.create({
+        //     firstName: req.body.firstName,
+        //     lastName: req.body.lastName,
+        //     email: req.body.email,
+        //     phone: req.body.phone,
+        //     age: req.body.age
+        // })
+
+        // res.json(user);
+
+
+        // const newUser = new User({
+        //     firstName: req.body.firstName,
+        //     lastName: req.body.lastName,
+        //     email: req.body.email,
+        //     phone: req.body.phone,
+        //     age: req.body.age,
+        //     imageName: req.body.imageName,
+        //     image: {
+        //         // data:req.file.filename,
+        //         data: fs.readFileSync("uploads/" + req.file.filename),
+        //         contentType: 'image/jpeg'
+        //     }
+        // })
+        // newUser.save()
+        //     .then(() => res.send('successfully uploaded')).catch(err => { console.log(err) })
+
+
+        upload(req, res, (err) => {
+            if (err) {
+                console.log(err)
+            } else {
+                const newImage = new User({
+                    imageName: req.body.imageName,
+                    email: req.body.email,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    phone: req.body.phone,
+                    age: req.body.age,
+                    image: {
+                        // data:req.file.filename,
+                        data: fs.readFileSync("uploads/" + req.file.filename),
+                        contentType: 'image/jpeg'
+                    }
+                })
+                newImage.save()
+                    .then(() => res.send('successfully uploaded')).catch(err => { console.log(err) })
+            }
         })
 
-        res.json(user);
 
     } catch (error) {
         console.log(error.message);
