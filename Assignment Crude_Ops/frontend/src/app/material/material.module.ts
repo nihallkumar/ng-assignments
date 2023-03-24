@@ -11,11 +11,8 @@ import {MatSelectModule} from '@angular/material/select';
 const MaterialComponents=[
   MatTableModule,
   MatFormFieldModule,
-  MatInputModule,
   MatSortModule,
-  MatPaginatorModule,
   MatButtonModule,
-  MatSelectModule,
 
 ];
 

@@ -1,15 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { MatPaginator } from '@angular/material/paginator';
+import { Component, OnInit } from '@angular/core';
 import { AuthenticationService, LoggedInData } from '../authentication/authentication.service';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { debounceTime } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { AllUserService } from './all-user.service';
-
 
 export interface UserData {
   _id: string,
@@ -27,68 +23,67 @@ export interface UserData {
 })
 export class AllUserComponent implements OnInit {
 
-  private users: any = []
-  dataSource: any
-  displayedColumns: string[] = []
 
   searchInput = new FormControl('');
   pageInput = new FormControl('');
 
-  public page = 1;
-  public limit = 5;
+  public rows: any
+  public page = '1';
+  public limit: number = 5;
   public search: any = "";
   public sorts = { sort: 'firstName', order: 'asc' };
-
-  selected=''
+  public total: number = 0
+  isActive = false;
 
   constructor(
     private http: HttpClient,
     private authService: AuthenticationService,
     private allUserService: AllUserService,
-    private router: Router
+    private router: Router,
   ) { }
 
-  @ViewChild(MatSort) sort = MatSort;
-  @ViewChild(MatPaginator) paginator = MatPaginator;
-
   ngOnInit(): void {
+    this.authService.userActive.subscribe(res => {
+      this.isActive = res;
+    })
 
     this.searchInput.valueChanges.pipe(
       debounceTime(500)
     ).subscribe((searchValue) => {
       console.log("inside search")
+      console.log(searchValue)
       this.allUserService.allUser(this.page, this.limit, searchValue, this.sorts.sort, this.sorts.order).subscribe(res => {
-        this.users = res;
-        this.dataSource = new MatTableDataSource(this.users.users)
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+        this.rows = (res as any).users;
+        console.log(res);
       })
     });
 
-
     this.getUsers();
-
-
-    this.authService.userActive.subscribe(res => {
-      if (res) {
-        this.displayedColumns = ['firstName', 'lastName', 'age', 'phone', 'email', 'update', 'delete'];
-      }
-      else {
-        this.displayedColumns = ['firstName', 'lastName', 'age', 'phone', 'email'];
-      }
-    })
-
-
   }
 
+  onSelect(selectedValue: string) {
+    this.limit = parseInt(selectedValue);
+    this.allUserService.allUser(this.page, this.limit, this.search, this.sorts.sort, this.sorts.order).subscribe(res => {
+      this.rows = (res as any).users;
+      console.log(res)
+    })
+  }
+
+  setPage(pageInfo: any) {
+    console.log("pageInfo===>", pageInfo);
+    this.allUserService.allUser(pageInfo.offset+1, this.limit, this.search, this.sorts.sort, this.sorts.order).subscribe(res => {
+      this.rows = (res as any).users;
+      console.log(res)
+    })
+  }
 
   getUsers() {
-    console.log('page: ', this.page, ' sorts.sort: ', this.sorts.sort, ' sorts.order: ', this.sorts.order, ' search: ', this.search)
+    console.log('page: ', this.page, ' limit: ', this.limit, ' sorts.sort: ', this.sorts.sort, ' sorts.order: ', this.sorts.order, ' search: ', this.search)
     this.allUserService.allUser(this.page, this.limit, this.search, this.sorts.sort, this.sorts.order).subscribe(res => {
-      this.users = res;
-      this.dataSource = new MatTableDataSource(this.users.users)
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
+      this.rows = (res as any).users;
+      this.total = (res as any).total;
+      console.log(this.total)
+      console.log(res)
     })
   }
 
@@ -115,15 +110,4 @@ export class AllUserComponent implements OnInit {
     console.log("Edit");
     this.router.navigate([`adduser/${user._id}`])
   }
-
-  // applyFilter(filterValue: string) {
-  //   this.dataSource.filter = filterValue.trim().toLowerCase()
-  // }
-
-  // applyFilter(filterValue: string) {
-  //   console.log(filterValue)
-  //   this.search = filterValue;
-  //   this.getUsers()
-  // }
-
 }

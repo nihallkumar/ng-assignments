@@ -1,52 +1,67 @@
-<div class="mat-elevation-z8 my-3">
-  <mat-form-field>
-    <input [formControl]="searchInput" matInput placeholder="Search">
-  </mat-form-field>
+<div class="my-3">
+  <input class="mb-3" size="8" [formControl]="searchInput" placeholder="Search">
 
-  <table mat-table [dataSource]="dataSource" matSort>
+  <span class="mx-5"><span>show </span><select (change)="onSelect($event.target.value)">
+    <option value="5">5</option>
+    <option value="10">10</option>
+    <option value="20">20</option>
+  </select><span> entries</span></span>
 
-    <ng-container matColumnDef="firstName">
-      <th mat-header-cell mat-sort-header="" *matHeaderCellDef> First Name </th>
-      <td mat-cell *matCellDef="let element"> {{element.firstName}} </td>
-    </ng-container>
+<ngx-datatable
+  [rows]="rows"
+  [columnMode]="'force'"
+  [headerHeight]="50"
+  [footerHeight]="50"
+  rowHeight="auto"
+  [count]="total"
+  [limit]="limit"
+  [externalPaging]="true"
+  (page)="setPage($event)"
+>
+  <ngx-datatable-column name="First Name" prop="firstName">
+    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+      <p>{{ value}}</p>
+    </ng-template>
+  </ngx-datatable-column>
 
-    <ng-container matColumnDef="lastName">
-      <th mat-header-cell mat-sort-header="" *matHeaderCellDef> Last Name </th>
-      <td mat-cell *matCellDef="let element"> {{element.lastName}} </td>
-    </ng-container>
+  <ngx-datatable-column name="Last Name" prop="lastName">
+    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+      <p>{{ value}}</p>
+    </ng-template>
+  </ngx-datatable-column>
 
-    <ng-container matColumnDef="email">
-      <th mat-header-cell mat-sort-header="" *matHeaderCellDef> Email </th>
-      <td mat-cell *matCellDef="let element"> {{element.email}} </td>
-    </ng-container>
+  <ngx-datatable-column name="Email" prop="email">
+    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+      <p>{{ value}}</p>
+    </ng-template>
+  </ngx-datatable-column>
 
-    <ng-container matColumnDef="phone">
-      <th mat-header-cell mat-sort-header="" *matHeaderCellDef> Phone </th>
-      <td mat-cell *matCellDef="let element"> {{element.phone}} </td>
-    </ng-container>
+  <ngx-datatable-column name="Phone" prop="phone">
+    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+      <p>{{ value}}</p>
+    </ng-template>
+  </ngx-datatable-column>
 
-    <ng-container matColumnDef="age">
-      <th mat-header-cell mat-sort-header="" *matHeaderCellDef> Age </th>
-      <td mat-cell *matCellDef="let element"> {{element.age}} </td>
-    </ng-container>
+  <ngx-datatable-column name="Age" prop="age">
+    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+      <p>{{ value}}</p>
+    </ng-template>
+  </ngx-datatable-column>
 
-    <ng-container matColumnDef="update">
-      <th mat-header-cell mat-sort-header="" *matHeaderCellDef> Update </th>
-      <td mat-cell *matCellDef="let element"><button (click)="onEdit(element)" mat-raised-button
-          color="primary">Edit</button></td>
-    </ng-container>
+  <ngx-datatable-column *ngIf="isActive" name="Update">
+    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+      <button (click)="onEdit(row)" mat-raised-button color="primary">Edit</button>
+    </ng-template>
+  </ngx-datatable-column>
 
-    <ng-container matColumnDef="delete">
-      <th mat-header-cell mat-sort-header="" *matHeaderCellDef> Delete </th>
-      <td mat-cell *matCellDef="let element"><button (click)="onDelete(element)" mat-raised-button
-          color="warn">Delete</button></td>
-    </ng-container>
+  <ngx-datatable-column *ngIf="isActive" name="Delete">
+    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+      <button (click)="onDelete(row)" mat-raised-button color="warn">Delete</button>
+    </ng-template>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
+  </ngx-datatable-column>
 
-  <mat-paginator [pageSizeOptions]="[10,20]" showFirstLastButtons></mat-paginator>
+</ngx-datatable>
 
 </div>
 
