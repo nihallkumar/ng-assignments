@@ -11,12 +11,11 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    image: {
+        type :String,
+    },
     imageName: {
         type: String,
-    },
-    image: {
-        data: Buffer,
-        contentType: String
     },
     email: {
         type: String,

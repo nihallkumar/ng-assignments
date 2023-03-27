@@ -72,7 +72,12 @@ export class AllUserComponent implements OnInit {
   filteredUsers(page: string, limit: number, search: any, sortsSort: string, sortsOrder: string) {
     this.allUserService.allUser(page, limit, search, sortsSort, sortsOrder).subscribe(res => {
       this.rows = (res as any).users;
-      console.log(res)
+      this.total = (res as any).total;
+
+      // this.rows.forEach((element: any) => {
+      //   const imgData = btoa(String.fromCharCode(...new Uint8Array((element.image.data.data))))
+      //   element.image.data.data = imgData;
+      // });
     })
   }
 
@@ -80,6 +85,11 @@ export class AllUserComponent implements OnInit {
     this.allUserService.allUser(this.page, this.limit, this.search, this.sorts.sort, this.sorts.order).subscribe(res => {
       this.rows = (res as any).users;
       this.total = (res as any).total;
+
+      // this.rows.forEach((element: any) => {
+      //   const imgData = btoa(String.fromCharCode(...new Uint8Array((element.image.data.data))))
+      //   element.image.data.data = imgData;
+      // })
     })
   }
 

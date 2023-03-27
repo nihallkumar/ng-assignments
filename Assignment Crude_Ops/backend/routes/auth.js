@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const Image = require('../models/Image');
 const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
@@ -114,102 +113,27 @@ const upload = multer({
     storage: storage
 }).single('image')
 
-router.post('/upload', (req, res) => {
-
-    upload(req, res, (err) => {
-        if (err) {
-            console.log(err)
-        } else {
-            const newImage = new Image({
-                imageName: req.body.imageName,
-                email: req.body.email,
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                phone: req.body.phone,
-                age: req.body.age,
-                image: {
-                    // data:req.file.filename,
-                    data: fs.readFileSync("uploads/" + req.file.filename),
-                    contentType: 'image/jpeg'
-                }
-            })
-            newImage.save()
-                .then(() => res.send('successfully uploaded')).catch(err => { console.log(err) })
-        }
-    })
-})
-
-router.get('/upload', upload,async (req, res) => {
-    const data = await Image.find();
-    res.json(data);
-})
-
-
 // ADD USER ????????????????????????????????????????????????????????????????/
-router.post('/adduser', [
-    // body('firstName', 'value can not be empty').notEmpty(),
-    // body('lastName', 'value can not be empty').notEmpty(),
-    // body('email', 'Enter a valid email').notEmpty(),
-    // body('phone', 'Enter valid value').isNumeric(),
-    // body('age', 'Enter valid value').isNumeric(),
-], async (req, res) => {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+router.post('/adduser', async (req, res) => {
 
     try {
-        // const user = await User.create({
-        //     firstName: req.body.firstName,
-        //     lastName: req.body.lastName,
-        //     email: req.body.email,
-        //     phone: req.body.phone,
-        //     age: req.body.age
-        // })
-
-        // res.json(user);
-
-
-        // const newUser = new User({
-        //     firstName: req.body.firstName,
-        //     lastName: req.body.lastName,
-        //     email: req.body.email,
-        //     phone: req.body.phone,
-        //     age: req.body.age,
-        //     imageName: req.body.imageName,
-        //     image: {
-        //         // data:req.file.filename,
-        //         data: fs.readFileSync("uploads/" + req.file.filename),
-        //         contentType: 'image/jpeg'
-        //     }
-        // })
-        // newUser.save()
-        //     .then(() => res.send('successfully uploaded')).catch(err => { console.log(err) })
-
-
         upload(req, res, (err) => {
             if (err) {
                 console.log(err)
             } else {
                 const newImage = new User({
-                    imageName: req.body.imageName,
-                    email: req.body.email,
                     firstName: req.body.firstName,
                     lastName: req.body.lastName,
+                    email: req.body.email,
                     phone: req.body.phone,
                     age: req.body.age,
-                    image: {
-                        // data:req.file.filename,
-                        data: fs.readFileSync("uploads/" + req.file.filename),
-                        contentType: 'image/jpeg'
-                    }
+                    imageName: req.body.imageName,
+                    image: req.body.image
                 })
                 newImage.save()
                     .then(() => res.send('successfully uploaded')).catch(err => { console.log(err) })
             }
         })
-
 
     } catch (error) {
         console.log(error.message);
@@ -219,27 +143,16 @@ router.post('/adduser', [
 
 
 // EDIT USER ?????????????????????????????????????????????????????
-router.patch('/edit/:id', [
-    body('firstName', 'value can not be empty').notEmpty(),
-    body('lastName', 'value can not be empty').notEmpty(),
-    body('email', 'Enter a valid email').notEmpty(),
-    body('phone', 'Enter valid value').isNumeric(),
-    body('age', 'Enter valid value').isNumeric(),
-], async (req, res) => {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
+router.patch('/edit/:id', async (req, res) => {
     try {
-        const { email, firstName, lastName, phone, age } = req.body;
+        const { email, firstName, lastName, phone, age, image } = req.body;
         let updatedUser = {};
         updatedUser.firstName = firstName
         updatedUser.lastName = lastName
         updatedUser.email = email
         updatedUser.phone = phone
         updatedUser.age = age
+        updatedUser.image = image
 
         let user = await User.findById(req.params.id);
         if (!user)
@@ -324,7 +237,7 @@ router.get('/allusers', async (req, res) => {
         res.json(response)
 
         // let user = await User.find().select("-__v").lean();
-        // res.json(users)
+        // res.json(user)
 
     } catch (error) {
         console.error(error.message);
@@ -336,7 +249,7 @@ router.get('/allusers', async (req, res) => {
 // USER DETAILS ?????????????????????????????????????????????????????
 router.get('/detail/:id', async (req, res) => {
     try {
-        const user = await User.findById(req.params.id).select("-password");
+        const user = await User.findById(req.params.id)
         res.json(user);
     } catch (error) {
         console.error(error.message);
